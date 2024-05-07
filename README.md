@@ -22,6 +22,13 @@ To test whether ```annotate_af``` is working correctly, you can run the followin
 ./annotate_af test/test_merged.vcf.gz test/test_merged_af_annotated.vcf
 ```
 
+If you want to write to stdin or stdout as part of a pipe, you can use the following syntax:
+
+```
+cat test/test.vcf.gz | ./annotate_af - - > test/test_af_annotated.vcf
+cat test/test_merged.vcf.gz | ./annotate_af - - > test/test_merged_af_annotated.vcf
+```
+
 ## Compiling annotate_af
 
 If you need to compile ```annotate_af``` from source, first load HTSLib. You can then compile the executable using the following command:
