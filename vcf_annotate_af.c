@@ -2,8 +2,8 @@
 #include <htslib/vcf.h>
 
 int main(int argc, char *argv[]) {
-    if (argc != 3) {
-        fprintf(stderr, "Usage: %s input.vcf output.vcf\n", argv[0]);
+    if (argc!=3) {
+        fprintf(stderr, "Usage: %s input.vcf <output.vcf>\n", argv[0]);
         return 1;
     }
 
@@ -12,8 +12,8 @@ int main(int argc, char *argv[]) {
 
     htsFile *fp_in = hts_open(input_file, "r");
     if (fp_in == NULL) {
-	fprintf(stderr, "Error opening input vcf file: %s\n", input_file);
-	return 1;
+	    fprintf(stderr, "Error opening input vcf file: %s\n", input_file);
+	    return 1;
     } 
 
     bcf_hdr_t *header = bcf_hdr_read(fp_in);
@@ -28,16 +28,16 @@ int main(int argc, char *argv[]) {
 
     htsFile *fp_out = hts_open(output_file, "w");
     if (fp_out == NULL) {
-	fprintf(stderr, "Error opening output VCF file: %s\n", output_file);
-	return 1;
+	    fprintf(stderr, "Error opening output VCF file: %s\n", output_file);
+	    return 1;
     }
 
 
     if (bcf_hdr_write(fp_out, header) != 0) {
-	fprintf(stderr, "Error writing header to output VCF file: %s\n", output_file);
-	bcf_hdr_destroy(header);
-	hts_close(fp_in);
-	hts_close(fp_out);
+	    fprintf(stderr, "Error writing header to output VCF file: %s\n", output_file);
+	    bcf_hdr_destroy(header);
+	    hts_close(fp_in);
+	    hts_close(fp_out);
 	return 1;
     }
 
