@@ -15,6 +15,11 @@ If HTSLib is unavailable on your system, you can [download HTSLib here](https://
 * An input VCF file (- for STDIN); these can be compressed or uncompressed, indexed or unindexed
 * An output VCF path (> for STDOUT)
 
+To test whether ```annotate_af``` is working correctly, you can run the following commands:
+
+```./annotate_af test/test.vcf.gz test/test_af_annotated.vcf```
+```./annotate_af test/test_merged.vcf.gz test/test_merged_af_annotated.vcf```
+
 ## Compiling annotate_af
 
 If you need to compile ```annotate_af``` from source, first load HTSLib. You can then compile the executable using the following command:
