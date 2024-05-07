@@ -22,7 +22,7 @@ To test whether ```annotate_af``` is working correctly, you can run the followin
 ./annotate_af test/test_merged.vcf.gz test/test_merged_af_annotated.vcf
 ```
 
-If you want to write to stdin or stdout as part of a pipe, you can use the following syntax:
+If you want to receive input from STDIN or write to STDOUT as part of a pipe, you can use the following syntax:
 
 ```
 cat test/test.vcf.gz | ./annotate_af - - > test/test_af_annotated.vcf
