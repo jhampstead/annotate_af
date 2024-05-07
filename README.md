@@ -14,3 +14,11 @@ If HTSLib is unavailable on your system, you can [download HTSLib here](https://
 ```annotate_af``` expects two arguments:
 * An input VCF file (- for STDIN); these can be compressed or uncompressed, indexed or unindexed
 * An output VCF path (> for STDOUT)
+
+## Compiling annotate_af
+
+If you need to compile ```annotate_af``` from source, first load HTSLib. You can then compile the executable using the following command:
+
+```gcc -o annotate_af vcf_annotate_af.c -lhts -lz```
+
+Compilation was tested using gcc 10.2.0 on Linux.
