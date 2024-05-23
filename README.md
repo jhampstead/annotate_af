@@ -13,7 +13,7 @@ If HTSLib is unavailable on your system, you can [download HTSLib here](https://
 
 ```annotate_af``` expects two arguments:
 * An input VCF file (- for STDIN); these can be compressed or uncompressed, indexed or unindexed
-* An output VCF path (> for STDOUT)
+* An output VCF path (- for STDOUT)
 
 To test whether ```annotate_af``` is working correctly, you can run the following commands:
 
