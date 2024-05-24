@@ -29,7 +29,7 @@ cat test/test.vcf.gz | ./annotate_af - - > test/test_af_annotated.vcf
 cat test/test_merged.vcf.gz | ./annotate_af - - > test/test_merged_af_annotated.vcf
 ```
 
-The GATK HaplotypeCaller with human germline presets, by default, assumes all sites are diploid. This assumption yields incorrect allele frequencies on chrX, chrY, and chrMT in the human genome when computed from uncorrected GT. To correct ploidy on these chromosomes prior to the calculation of allele frequencies, the following syntax can be used:
+The GATK HaplotypeCaller with human germline presets, by default, assumes all sites are diploid. This assumption yields incorrect allele frequencies on chrX, chrY, and chrMT in the human genome when computed from uncorrected genotypes. To correct ploidy on these chromosomes prior to the calculation of allele frequencies, the following syntax can be used:
 
 ```
 cat test/test.vcf.gz | bcftools +fixploidy test/test_merged.vcf.gz -- -s test/sample_sex.txt -p test/ploidy_regions.txt | ./annotate_af - - > test/test_af_annotated.vcf
