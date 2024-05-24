@@ -29,6 +29,15 @@ cat test/test.vcf.gz | ./annotate_af - - > test/test_af_annotated.vcf
 cat test/test_merged.vcf.gz | ./annotate_af - - > test/test_merged_af_annotated.vcf
 ```
 
+The GATK HaplotypeCaller with human germline presets, by default, assumes all sites are diploid. This assumption yields incorrect allele frequencies on chrX, chrY, and chrMT in the human genome when computed from uncorrected AD. To correct ploidy on these chromosomes prior to the calculation of allele frequencies, the following syntax can be used:
+
+```
+cat test/test.vcf.gz | bcftools +fixploidy test_merged.vcf.gz -- -s sample_sex.txt -p ploidy_regions.txt | ./annotate_af - - > test/test_af_annotated.vcf
+cat test/test_merged.vcf.gz | bcftools +fixploidy test_merged.vcf.gz -- -s sample_sex.txt -p ploidy_regions.txt | ./annotate_af - - > test/test_merged_af_annotated.vcf
+```
+
+The ```bcftools +fixploidy``` plugin requires two additional files: one file of sexes for all samples in the VCF, formatted like the one in ```test/```, and a set of regions and ploidies to correct. For more information about options and syntax of bcftools plugins, see the [bcftools manual page](https://samtools.github.io/bcftools/bcftools.html).
+
 ## Compiling annotate_af
 
 If you need to compile ```annotate_af``` from source, first load HTSLib. You can then compile the executable using the following command:
