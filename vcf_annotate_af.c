@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <htslib/vcf.h>
 
+#define MAX_PLOIDY 2
+
 int main(int argc, char *argv[]) {
     if (argc!=3) {
         fprintf(stderr, "Usage: %s input.vcf <output.vcf>\n", argv[0]);
@@ -38,7 +40,7 @@ int main(int argc, char *argv[]) {
 	    bcf_hdr_destroy(header);
 	    hts_close(fp_in);
 	    hts_close(fp_out);
-	return 1;
+	    return 1;
     }
 
 
@@ -49,34 +51,42 @@ int main(int argc, char *argv[]) {
     // Pre-initialize loop variables so it only happens once instead of each loop
     int i, j, allele, n_alts;
     int ngt_arr = 0, *gt_arr = NULL, ngt;
+    int ploidy, total_alleles;
 
     while(bcf_read(fp_in, header, r) >= 0) {
-	if (r->rid > 21) break;
 
-	n_alts = r->n_allele-1;
-	int n_alleles_per_sample[n_alts];
-	memset(n_alleles_per_sample, 0, sizeof(n_alleles_per_sample));
+        n_alts = r->n_allele-1;
+        int n_alleles_per_sample[n_alts];
+        memset(n_alleles_per_sample, 0, sizeof(n_alleles_per_sample));
 
-	ngt = bcf_get_genotypes(header, r, &gt_arr, &ngt_arr);
+        ngt = bcf_get_genotypes(header, r, &gt_arr, &ngt_arr);
+        ploidy = ngt / nsamples;
+        total_alleles = 0;
 
-	for (i = 0; i < nsamples; i++) {
-	    for (j = 0; j < 2; j++) { // maximum of two alleles
-		allele = bcf_gt_allele(gt_arr[i * 2 + j]);
-		if (allele > 0) {
-		    n_alleles_per_sample[allele-1]++;
-		}
-	    }
-	}
+        for (i = 0; i < nsamples; i++) {
+            int32_t *ptr = gt_arr + i*ploidy;
+            for (j = 0; j < ploidy; j++) {
+                if (ptr[j]==bcf_int32_vector_end) break;
+                if (bcf_gt_is_missing(ptr[j])) continue;
 
-	float frequencies[n_alts];
-	for (j = 0; j < n_alts; j++) {
-	    frequencies[j] = (float) n_alleles_per_sample[j] / ngt; 
-	}
+                total_alleles++;
+                allele = bcf_gt_allele(ptr[j]);
+                if (allele > 0) {
+                    n_alleles_per_sample[allele-1]++;
+                }
+            }
+        }
 
-	bcf_update_info_float(header, r, "CAF", &frequencies, n_alts);
-	bcf_write(fp_out, header, r);
+        float frequencies[n_alts];
+        for (j = 0; j < n_alts; j++) {
+            frequencies[j] = (float) n_alleles_per_sample[j] / total_alleles;
+            // fprintf(stderr, "%f\t%d\t%d\n", frequencies[j], n_alleles_per_sample[j], ngt);
+        }
 
-	bcf_clear(r);
+        bcf_update_info_float(header, r, "CAF", &frequencies, n_alts);
+        bcf_write(fp_out, header, r);
+
+        bcf_clear(r);
     }
 
     bcf_destroy(r);
