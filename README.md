@@ -13,7 +13,7 @@ If HTSLib is unavailable on your system, you can [download HTSLib here](https://
 
 ```annotate_af``` expects two arguments:
 * An input VCF file (- for STDIN); these can be compressed or uncompressed, indexed or unindexed
-* An output VCF path (> for STDOUT)
+* An output VCF path (- for STDOUT)
 
 To test whether ```annotate_af``` is working correctly, you can run the following commands:
 
@@ -21,6 +21,22 @@ To test whether ```annotate_af``` is working correctly, you can run the followin
 ./annotate_af test/test.vcf.gz test/test_af_annotated.vcf
 ./annotate_af test/test_merged.vcf.gz test/test_merged_af_annotated.vcf
 ```
+
+If you want to receive input from STDIN or write to STDOUT as part of a pipe, you can use the following syntax:
+
+```
+cat test/test.vcf.gz | ./annotate_af - - > test/test_af_annotated.vcf
+cat test/test_merged.vcf.gz | ./annotate_af - - > test/test_merged_af_annotated.vcf
+```
+
+The GATK HaplotypeCaller with human germline presets, by default, assumes all sites are diploid. This assumption yields incorrect allele frequencies on chrX, chrY, and chrMT when computed from uncorrected genotypes. To correct ploidy on these chromosomes prior to the calculation of allele frequencies, the following syntax can be used:
+
+```
+cat test/test.vcf.gz | bcftools +fixploidy test/test_merged.vcf.gz -- -s test/sample_sex.txt -p test/ploidy_regions.txt | ./annotate_af - - > test/test_af_annotated.vcf
+cat test/test_merged.vcf.gz | bcftools +fixploidy test/test_merged.vcf.gz -- -s test/sample_sex.txt -p test/ploidy_regions.txt | ./annotate_af - - > test/test_merged_af_annotated.vcf
+```
+
+The ```bcftools +fixploidy``` plugin requires two additional files: one file of sexes for all samples in the VCF, formatted like the one in ```test/```, and a set of regions and ploidies to correct. For more information about options and syntax of bcftools plugins, see the [bcftools manual page](https://samtools.github.io/bcftools/bcftools.html).
 
 ## Compiling annotate_af
 
